@@ -11,4 +11,4 @@ instance_type                                   = "t2.micro"
 root_volume_type                                = "gp2"
 root_volume_size                                = 50
 app_server_count                                = 2
-web_server_count                                = 3
+web_server_count                                = 4

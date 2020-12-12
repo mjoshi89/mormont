@@ -37,3 +37,18 @@ output "subnet_azs" {
   value       = module.vpc.azs
   description = "The list of availability zones which the subnets span across"
 }
+
+output "web_server_securitygroup_id" {
+  description = "The security group id of the web server instance"
+  value       = aws_instance.web_server.*.vpc_security_group_ids
+}
+
+output "web_server_instance_id" {
+  description = "The instance id of the web_server instance"
+  value       = aws_instance.web_server.*.id
+}
+
+output "web_server_private_ip_address" {
+  description = "The private IP address of the web_server instance"
+  value       = aws_instance.web_server.*.private_ip
+}
