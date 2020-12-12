@@ -75,7 +75,41 @@ resource "aws_security_group" "web_server_securitygroup" {
   vpc_id      = module.vpc.vpc_id
 
   dynamic "ingress" {
-    for_each = local.security_group_inbound_rules
+    for_each = local.security_group_web_inbound_rules
+    iterator = property
+    content {
+      from_port   = property.value.from
+      to_port     = property.value.to
+      protocol    = property.value.protocol
+      cidr_blocks = [property.value.access_cidr]
+      description = property.value.description
+    }
+  }
+
+  dynamic "egress" {
+    for_each = local.security_group_outbound_rules
+    iterator = property
+    content {
+      from_port   = property.value.from
+      to_port     = property.value.to
+      protocol    = property.value.protocol
+      description = property.value.description
+      cidr_blocks = [property.value.access_cidr]
+    }
+  }
+
+  tags = merge({
+    Name = format("%s", "${var.aws_environment}-${var.aws_region}-sg-web-server-security-group")
+  }, local.tags.tags_shared_by_all_components)
+}
+
+resource "aws_security_group" "app_server_securitygroup" {
+  name        = format("%s", "${var.aws_environment}-${var.aws_region}-sg-app-server-security-group")
+  description = "Security group for the App Server Instance"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = local.security_group_app_inbound_rules
     iterator = property
     content {
       from_port   = property.value.from
@@ -136,7 +170,7 @@ module "web_server_alb" {
   ]
 
   tags = merge({
-    Name = format("%s", "${var.aws_environment}-${var.aws_region}-web-server-albp")
+    Name = format("%s", "${var.aws_environment}-${var.aws_region}-web-server-alb")
   }, local.tags.tags_shared_by_all_components)
 }
 */
