@@ -3,7 +3,7 @@ locals {
   aws_config_bucket_name       = "${var.aws_environment}-${var.aws_region}-s3-aws-config-bucket"
   aws_config_bucket_key_prefix = var.aws_environment
 
-  security_group_inbound_rules = [{
+  security_group_web_inbound_rules = [{
     "from" : "80"
     "to" : "80"
     "protocol" : "tcp"
@@ -16,6 +16,14 @@ locals {
     "protocol" : "tcp"
     "description" : "HTTPS port"
     "access_cidr" : "0.0.0.0/0"
+  }]
+
+  security_group_app_inbound_rules = [{
+    "from" : "0"
+    "to" : "0"
+    "protocol" : "-1"
+    "description" : "All traffic"
+    "access_cidr" : aws_security_group.web_server_securitygroup.id
   }]
 
   security_group_outbound_rules = [{
