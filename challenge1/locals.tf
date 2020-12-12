@@ -3,6 +3,29 @@ locals {
   aws_config_bucket_name       = "${var.aws_environment}-${var.aws_region}-s3-aws-config-bucket"
   aws_config_bucket_key_prefix = var.aws_environment
 
+  security_group_inbound_rules = [{
+    "from" : "80"
+    "to" : "80"
+    "protocol" : "tcp"
+    "description" : "HTTP port"
+    "access_cidr" : "0.0.0.0/0"
+  },
+  {
+    "from" : "443"
+    "to" : "443"
+    "protocol" : "tcp"
+    "description" : "HTTPS port"
+    "access_cidr" : "0.0.0.0/0"
+  }]
+
+  security_group_outbound_rules = [{
+    "from" : "0"
+    "to" : "0"
+    "protocol" : "-1"
+    "description" : "All traffic"
+    "access_cidr" : "0.0.0.0/0"
+  }]
+
   tags = {
     tags_shared_by_all_components = {
       project            = "challenge"
