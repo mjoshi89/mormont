@@ -264,3 +264,73 @@ resource "aws_lb_target_group_attachment" "app_server_attachment" {
   target_id        = aws_instance.app_server[count.index].id
   port             = 8080
 }
+
+resource "aws_security_group" "database_securitygroup" {
+  name        = format("%s", "${var.aws_environment}-${var.aws_region}-sg-database-security-group")
+  description = "Security group for the Database Instance"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = local.security_group_db_inbound_rules
+    iterator = property
+    content {
+      from_port   = property.value.from
+      to_port     = property.value.to
+      protocol    = property.value.protocol
+      cidr_blocks = [property.value.access_cidr]
+      description = property.value.description
+    }
+  }
+
+  dynamic "egress" {
+    for_each = local.security_group_outbound_rules
+    iterator = property
+    content {
+      from_port   = property.value.from
+      to_port     = property.value.to
+      protocol    = property.value.protocol
+      description = property.value.description
+      cidr_blocks = [property.value.access_cidr]
+    }
+  }
+
+  tags = merge({
+    Name = format("%s", "${var.aws_environment}-${var.aws_region}-sg-database-security-group")
+    role      = local.tags.component_specific_tags.security_group_tags.role
+  }, local.tags.tags_shared_by_all_components)
+}
+
+module "db" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "~> 2.0"
+
+  identifier = "database1"
+
+  engine            = var.db_engine
+  engine_version    = var.db_version
+  instance_class    = var.db_instance_type
+  allocated_storage = var.db_volume_size
+
+  name     = "database1"
+  username = var.db_username
+  password = var.db_password
+  port     = "3306"
+
+  vpc_security_group_ids = [aws_security_group.database_securitygroup.id]
+
+  maintenance_window = "Mon:00:00-Mon:03:00"
+  backup_window      = "03:00-06:00"
+
+  tags = merge({
+    role      = local.tags.component_specific_tags.database_tags.role
+  }, local.tags.tags_shared_by_all_components)
+
+  # DB subnet group
+  subnet_ids = module.vpc.private_subnets
+
+  # DB parameter group
+  family = var.db_family
+
+  # DB option group
+  major_engine_version = var.db_major_engine_version
+}
