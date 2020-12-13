@@ -8,6 +8,21 @@ locals {
     "to" : "80"
     "protocol" : "tcp"
     "description" : "HTTP port"
+    "security_group" : aws_security_group.web_server_alb_securitygroup.id
+  },
+  {
+    "from" : "443"
+    "to" : "443"
+    "protocol" : "tcp"
+    "description" : "HTTPS port"
+    "security_group" : aws_security_group.web_server_alb_securitygroup.id
+  }]
+
+  security_group_web_alb_inbound_rules = [{
+    "from" : "80"
+    "to" : "80"
+    "protocol" : "tcp"
+    "description" : "HTTP port"
     "access_cidr" : "0.0.0.0/0"
   },
   {
@@ -23,7 +38,7 @@ locals {
     "to" : "0"
     "protocol" : "-1"
     "description" : "All traffic"
-    "access_cidr" : aws_security_group.web_server_securitygroup.id
+    "security_group" : aws_security_group.web_server_securitygroup.id
   }]
 
   security_group_outbound_rules = [{
@@ -78,6 +93,18 @@ locals {
 
       app_server_tags = {
         role = "app_server"
+      }
+
+      security_group_tags = {
+        role = "security_group"
+      }
+
+      alb_tags = {
+        role = "application_lb"
+      }
+
+      nlb_tags = {
+        role = "network_lb"
       }
     }
   }
