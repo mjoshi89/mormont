@@ -41,6 +41,14 @@ locals {
     "security_group" : aws_security_group.web_server_securitygroup.id
   }]
 
+  security_group_db_inbound_rules = [{
+    "from" : "3306"
+    "to" : "3306"
+    "protocol" : "tcp"
+    "description" : "DB traffic"
+    "access_cidr" : var.vpc_cidr_address
+  }]
+
   security_group_outbound_rules = [{
     "from" : "0"
     "to" : "0"
@@ -105,6 +113,10 @@ locals {
 
       nlb_tags = {
         role = "network_lb"
+      }
+
+      database_tags = {
+        role = "database"
       }
     }
   }

@@ -56,7 +56,7 @@ variable "root_volume_size" {
 
 variable "instance_type" {
   type        = string
-  description = "The instace type of the ansible servers"
+  description = "The instace type of the web and app servers"
 }
 
 variable "app_server_count" {
@@ -67,4 +67,44 @@ variable "app_server_count" {
 variable "web_server_count" {
   type        = number
   description = "Number of Web servers"
+}
+
+variable "db_instance_type" {
+  type        = string
+  description = "The instace type of the database server"
+}
+
+variable "db_volume_size" {
+  type        = string
+  description = "The size of the database volume"
+}
+
+variable "db_engine" {
+  type        = string
+  description = "The type of the database engine"
+}
+
+variable "db_version" {
+  type        = string
+  description = "The version of the database"
+}
+
+variable "db_username" {
+  type        = string
+  description = "The username for the database"
+}
+
+variable "db_password" {
+  type        = string
+  description = "The password for the database"
+}
+
+variable "db_family" {
+  type        = string
+  description = "The family for the database"
+}
+
+variable "db_major_engine_version" {
+  type        = string
+  description = "The major engine for the database"
 }
