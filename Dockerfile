@@ -1,4 +1,4 @@
-FROM alpine:3.11.6
+FROM alpine/git:v2.26.2
 
 ENV TERRAFORM_VERSION=0.13.5
 
